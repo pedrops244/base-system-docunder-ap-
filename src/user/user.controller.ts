@@ -11,9 +11,9 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findById(+id);
+  @Get()
+  findOne(@Param('email') email: string) {
+    return this.userService.findByEmail(email);
   }
 
   // @Get()

@@ -21,21 +21,9 @@ export class UserService {
     };
   }
 
-  findById(id: number) {
+  findByEmail(email: string) {
     return this.prisma.user.findUnique({
-      where: { id },
+      where: { email },
     });
   }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // findAll() {
-  //   return `This action returns all user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }
