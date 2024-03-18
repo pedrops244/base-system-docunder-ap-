@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { UserFromJwt } from 'src/auth/models/UserFromJwt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -54,7 +55,7 @@ export class UserService {
     });
   }
 
-  async update(id: number, newData: Partial<User>): Promise<User> {
+  async update(id: number, newData: UpdateUserDto): Promise<UpdateUserDto> {
     return this.prisma.user.update({
       where: { id },
       data: newData,

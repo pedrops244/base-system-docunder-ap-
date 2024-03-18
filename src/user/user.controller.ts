@@ -10,54 +10,50 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
-import { User } from './entities/user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @IsPublic()
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
   async findAll() {
-    try {
-      const users = await this.userService.findAll();
-      return users;
-    } catch (e) {
-      return null;
-    }
+    return await this.userService.findAll();
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() newData: Partial<User>) {
-    try {
-      const user = await this.userService.findById(+id);
-      if (!user) {
-        return { errors: ['Usuário não encontrado.'] };
-      }
-      const updatedUser = await this.userService.update(+id, newData);
-      const { id: userId, name, email } = updatedUser;
-
-      return { id: userId, name, email };
-    } catch (e) {
-      return { errors: [e.message] };
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.userService.findById(+id);
+    if (!user) {
+      return { errors: ['Usuário não encontrado.'] };
     }
+
+    // Verificar email único
+    const existingUser = await this.userService.findByEmail(
+      updateUserDto.email,
+    );
+    if (existingUser && existingUser.id !== +id) {
+      return { errors: ['O email já está em uso.'] };
+    }
+
+    // Atualizar o usuário com os novos dados
+    const updatedUser = await this.userService.update(+id, updateUserDto);
+    const { id: userId, name, email } = updatedUser;
+    return { id: userId, name, email };
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    try {
-      const user = await this.userService.findById(+id);
-      if (!user) {
-        return { errors: ['Usuário não encontrado.'] };
-      }
-      await this.userService.delete(+id);
-      return 'Usuário deletado com sucesso! Faça login ou crie sua conta novamente.';
-    } catch (e) {
-      return { errors: [e.message] };
+    const user = await this.userService.findById(+id);
+    if (!user) {
+      return { errors: ['Usuário não encontrado.'] };
     }
+    await this.userService.delete(+id);
+    return 'Usuário deletado com sucesso! Faça login ou crie sua conta novamente.';
   }
 }
