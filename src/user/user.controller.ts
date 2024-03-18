@@ -33,7 +33,6 @@ export class UserController {
       return { errors: ['Usuário não encontrado.'] };
     }
 
-    // Verificar email único
     const existingUser = await this.userService.findByEmail(
       updateUserDto.email,
     );
@@ -41,7 +40,6 @@ export class UserController {
       return { errors: ['O email já está em uso.'] };
     }
 
-    // Atualizar o usuário com os novos dados
     const updatedUser = await this.userService.update(+id, updateUserDto);
     const { id: userId, name, email } = updatedUser;
     return { id: userId, name, email };
