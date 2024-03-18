@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
+import { UserFromJwt } from 'src/auth/models/UserFromJwt';
 
 @Injectable()
 export class UserService {
@@ -24,6 +26,38 @@ export class UserService {
   findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
+    });
+  }
+
+  findById(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  async findAll(): Promise<UserFromJwt[]> {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
+  async delete(id: number): Promise<User> {
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
+
+  async update(id: number, newData: Partial<User>): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: newData,
     });
   }
 }
