@@ -1,13 +1,14 @@
 datasource db {
-  provider = "postgres"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
-model Users {
+model User {
   id Int @id @default(autoincrement())
   email    String @unique
   password String

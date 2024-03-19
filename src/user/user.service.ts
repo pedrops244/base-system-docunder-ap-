@@ -21,6 +21,8 @@ export class UserService {
     return {
       ...createdUser,
       password: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
     };
   }
 
